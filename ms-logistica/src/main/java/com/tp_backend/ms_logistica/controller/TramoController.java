@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 import java.util.List;
 
 @RestController
-@RequestMapping("/tramos")
+@RequestMapping("/logistica/tramo")
 @RequiredArgsConstructor
 public class TramoController {
 
