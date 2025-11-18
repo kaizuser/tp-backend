@@ -1,0 +1,23 @@
+server:
+  port: 8080
+
+spring:
+  cloud:
+    gateway:
+      mvc:
+        routes:
+
+          - id: ms-usuario
+            uri: http://localhost:8083
+            predicates:
+              - Path=/gestion-usuario/**
+
+          - id: ms-comercial
+            uri: http://localhost:8081
+            predicates:
+              - Path=/gestion-comercial/**
+
+          - id: ms-logistica
+            uri: http://localhost:8082
+            predicates:
+              - Path=/gestion-logistica/**
