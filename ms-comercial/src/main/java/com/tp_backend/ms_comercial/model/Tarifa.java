@@ -4,15 +4,15 @@ package com.tp_backend.ms_comercial.model;
 import jakarta.persistence.*;
 import lombok.*;
 import com.tp_backend.ms_comercial.enums.*;
+import com.tp_backend.ms_comercial.model.Contenedor;
 
 
 @Entity
-@Table(name = "camion")
+@Table(name = "tarifa")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-
 public class Tarifa {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,8 +33,10 @@ public class Tarifa {
     private long camionId;
         
     private long depositoId;
-    
-    private long contenedorId;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "contenedor_id", unique = true, nullable = false)
+    private Contenedor contenedor;
 
     private long rutaId;
     

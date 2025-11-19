@@ -6,7 +6,7 @@ import com.tp_backend.ms_comercial.enums.*;
 
 
 @Entity
-@Table(name = "camion")
+@Table(name = "contenedor")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

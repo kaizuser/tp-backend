@@ -3,9 +3,12 @@ package com.tp_backend.ms_comercial.model;
 import jakarta.persistence.*;
 import lombok.*;
 import com.tp_backend.ms_comercial.enums.*;
+import com.tp_backend.ms_comercial.model.Contenedor;
+import java.time.LocalDate;
+
 
 @Entity
-@Table(name = "camion")
+@Table(name = "solicitud")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -17,7 +20,7 @@ public class Solicitud {
     private Long idSolicitud;
 
     @Column(name = "fecha_solicitud")
-    private String fechaSolicitud;
+    private LocalDate fechaSolicitud;
 
     @Column(name = "origen")
     private String origen;
@@ -34,17 +37,19 @@ public class Solicitud {
     @Column(name = "tiempo_final")
     private String tiempoFinal;
 
-    @Enumerated(EnumType.STRING)
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "contenedor_id", unique = true, nullable = false)
     private Contenedor contenedor;
 
+
+    @Column(name = "cliente_id")
     private Long clienteId;
 
     @Enumerated(EnumType.STRING)
     private EstadoEnum estado;
 
+    @Column(name = "ruta_id")
     private Long rutaId;
-    
-
-
     
 }
