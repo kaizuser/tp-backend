@@ -1,83 +1,241 @@
 To do:
-requerimientos dentro de cada ms 
+
+1) ms-comercial
+
+2) todos los requerimientos dentro de cada ms 
+
+3) probar la api de google maps
+
+4) API Client interno entre microservicios
+
+5) verificar que cada requerimiento funcione con: @PreAuthorize("hasRole('rol')")
+
+6) dockerización individual para cada ms 
+
+7) levantar todo y empezar a probar con postman
+
+Extra: 
+Creo que no hace falta meterlo en el rar asique lo podemos hacer en el finde, el tema de la presentación:
+dividir que explica cada uno, la secuencia y documentación con Swagger / OpenAPI y los diagramas actualizados.
+La tiro para robar un poco de tiempo, si llegamos para agregarlo al rar mejor.
 
 
-verificar que cada requerimiento funcione con y solo con:
-@PreAuthorize("hasRole('rol')")
-
-
-API Client interno entre microservicios
-
-
-google maps
-
-
-detalladamente:
 
 
 
-# 🟨 *FASE 5 — API Client interno entre microservicios (Apunte 18)*
 
-El proyecto requiere que unas llamadas sean *microservicio → microservicio* usando RestTemplate/WebClient:
+detalladamente: el punto 3 y 4:
+3) Probar la GOOGLE DISTANCE API (solo MS Logística)
 
-Ejemplos del TPI:
+Esta parte ya la empezamos antes.
+Ahora te lo pongo en modo TPI oficial.
 
-* Logística consulta Usuarios para validar un chofer
-* Comercial consulta Usuarios para validar cliente
-* Logística consulta Comercial para obtener contenedores
-* Etc.
+📌 ¿Qué exige el enunciado?
 
-Debemos agregar un *cliente REST* configurado como Bean:
+✔ Debe calcular:
 
-java
-@Bean
-public RestTemplate restTemplate() {
-   return new RestTemplate();
+distancia origen → depósito
+
+depósito → depósito
+
+depósito → destino
+
+origen → destino
+
+✔ Debe usar Google Distance Matrix
+✔ Debe tener un servicio interno (GeoService)
+✔ Debe guardar:
+
+kilómetros
+
+tiempo estimado
+
+✔ Debe integrarse a tramos y rutas
+✔ Debe usarse para:
+
+costo estimado
+
+costo real
+
+tiempo estimado
+
+tiempo real
+
+📦 LO QUE YA TENÉS HECHO (bien)
+
+GeoService usando RestClient
+
+DTO DistanciaDTO
+
+Lectura de API key desde application.yml
+
+Controlador opcional de prueba
+
+⚠ LO QUE FALTA HACER (clave para aprobar)
+✔ Integrar esto dentro de TramoService
+
+Cuando un operador crea un tramo:
+
+POST /logistica/tramo
+
+
+Tu MS debe hacer:
+
+Armar string "lat,lng"
+
+Llamar a geoService.calcularDistancia(...)
+
+Setear:
+
+tramo.distanciaKm = dto.getKilometros()
+tramo.duracionEstimado = dto.getDuracionTexto()
+
+
+Guardar el tramo
+
+Usar esos valores para costos
+
+Ejemplo real dentro de TramoService
+public Tramo crearTramo(Tramo t) throws Exception {
+
+    String origen = t.getOrigenLat() + "," + t.getOrigenLng();
+    String destino = t.getDestinoLat() + "," + t.getDestinoLng();
+
+    DistanciaDTO d = geoService.calcularDistancia(origen, destino);
+
+    t.setDistanciaKm(d.getKilometros());
+    t.setDuracionEstimado(d.getDuracionTexto());
+
+    return tramoRepository.save(t);
 }
 
 
-Y luego:
 
-java
-restTemplate.getForObject("http://localhost:8081/gestion-comercial/...", DTO.class)
+4) API CLIENT INTERNO ENTRE MICROSERVICIOS (Apunte 18)
+
+En un sistema de microservicios, un MS debe pedir datos a otro MS.
+No se deben compartir DB.
+
+💡 Es decir:
+
+MS Logística NO accede a la DB de MS Usuarios
+
+MS Comercial NO accede a la DB de MS Usuarios
+
+Cada MS expone APIs REST, y otros MS las consumen con un API Client interno
+
+Esto el apunte lo explica EXACTO.
+
+📌 ¿Qué llamadas internas necesitás según el TPI?
+✔ Logística consulta Usuarios para validar que el chófer exista
+GET /gestion-usuario/empleado/{id}
+
+✔ Comercial consulta Usuarios para verificar el cliente
+GET /gestion-usuario/cliente/{id}
+
+✔ Logística consulta Comercial para obtener datos del contenedor
+GET /gestion-comercial/contenedor/{id}
+
+✔ Logística consulta Comercial para obtener tarifas
+GET /gestion-comercial/tarifa/{id}
+
+📌 ¿Qué herramienta usar para estas llamadas internas?
+
+El apunte permite dos opciones:
+
+✔ OPTION 1 — RestTemplate (simple, clásico)
+✔ OPTION 2 — WebClient (moderno, reactivo)
+
+Te recomiendo RestTemplate, más fácil para microservicios sin Reactor.
+
+🧱 Paso 1: Definir el RestTemplate global
+
+En cada MS que llame a otro, debe existir este Bean:
+
+@Bean
+public RestTemplate restTemplate() {
+    return new RestTemplate();
+}
+
+🧱 Paso 2: Crear un "client" interno por cada MS que consumas
+Ejemplo: Logística quiere consultar Usuarios
+
+Crea:
+
+src/main/java/.../client/UsuarioClient.java
+
+@Service
+@RequiredArgsConstructor
+public class UsuarioClient {
+
+    private final RestTemplate restTemplate;
+
+    private final String BASE_URL = "http://localhost:8081/gestion-usuario";
+
+    public UsuarioDTO obtenerEmpleado(Integer id) {
+        return restTemplate.getForObject(
+            BASE_URL + "/empleado/" + id,
+            UsuarioDTO.class
+        );
+    }
+}
 
 
----
+✔ Esto es EXACTAMENTE lo que exige el apunte 18.
+✔ Queda claro quién consulta a quién.
 
-# 🟫 *FASE 6 — Google Distance API (solo ms-logística)*
+🧱 Paso 3: Inyectar el client en el servicio que corresponde
 
-El TPI pide:
+Ejemplo:
 
-✔ Logística debe llamar a *Google Distance Matrix API*
-✔ Debe calcular distancia entre depósitos
+@Service
+@RequiredArgsConstructor
+public class TramoService {
 
-Se usa WebClient o RestTemplate.
+    private final UsuarioClient usuarioClient;
 
-Necesita:
+    public void asignarCamion(Tramo t) {
 
-* API Key
-* Endpoint GET
-* Parse del JSON
-* Devolver distancia en km
+        UsuarioDTO chofer = usuarioClient.obtenerEmpleado(t.getIdChofer());
 
----
+        if (chofer == null) {
+            throw new RuntimeException("Chofer inexistente");
+        }
+    }
+}
+
+🧱 Paso 4: Importante — Debe enviar TOKEN JWT
+
+Cuando un MS llama a otro MS, TAMBIÉN debe enviar un Authorization header.
+
+No puede dejar endpoints sin seguridad.
+
+Entonces:
+
+HttpHeaders headers = new HttpHeaders();
+headers.setBearerAuth(tokenActual); // <-- el token JWT del usuario
+
+HttpEntity<Void> entity = new HttpEntity<>(headers);
+
+ResponseEntity<UsuarioDTO> resp =
+        restTemplate.exchange(
+            BASE_URL + "/empleado/" + id,
+            HttpMethod.GET,
+            entity,
+            UsuarioDTO.class
+        );
 
 
-# 🟪 *FASE 8 — Dockerización (Apunte 22 y 23)*
-
-Dockerizar:
-
-* ms-usuario
-* ms-comercial
-* ms-logistica
-* api-gateway
-* keycloak
-
-Y crear un docker-compose.yml global.
+✔ De esta manera logística actúa en nombre del usuario real
+✔ El profesor lo pide como “propagación de seguridad entre microservicios”.
 
 
 
 
+
+
+
+Comandos:
 
 ./mvnw clean                compila
 ./mvnw spring-boot:run      runea 
