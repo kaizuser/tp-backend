@@ -16,7 +16,7 @@ import com.tp_backend.ms_comercial.model.Contenedor;
 public class Tarifa {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idTarifa;
+    private Long id;
 
     @Column(name = "tipo")
     private String tipo;

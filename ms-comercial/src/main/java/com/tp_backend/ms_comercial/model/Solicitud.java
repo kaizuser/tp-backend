@@ -17,7 +17,7 @@ import java.time.LocalDate;
 public class Solicitud {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idSolicitud;
+    private Long id;
 
     @Column(name = "fecha_solicitud")
     private LocalDate fechaSolicitud;
@@ -31,17 +31,18 @@ public class Solicitud {
     @Column(name = "costo_estimado")
     private Double costoEstimado;
 
+    @Column(name = "costo_final")
+    private Double costoFinal;
+
     @Column(name = "tiempo_estimado")
     private String tiempoEstimado;
 
     @Column(name = "tiempo_final")
     private String tiempoFinal;
 
-
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "contenedor_id", unique = true, nullable = false)
     private Contenedor contenedor;
-
 
     @Column(name = "cliente_id")
     private Long clienteId;
