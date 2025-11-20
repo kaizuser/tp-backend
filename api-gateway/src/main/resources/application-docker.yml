@@ -1,0 +1,42 @@
+server:
+  port: 8080
+
+spring:
+  web:
+    cors:
+      allowed-origins: "*"
+      allowed-methods: "*"
+      allowed-headers: "*"
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          # OJO: desde dentro del container ya no hay "localhost":
+          issuer-uri: http://keycloak:8080/realms/tpi-backend
+
+  cloud:
+    gateway:
+      mvc:
+        routes:
+
+          - id: ms-usuario
+            uri: http://ms-usuario:8083
+            predicates:
+              - Path=/gestion-usuario/**
+
+          - id: ms-comercial
+            uri: http://ms-comercial:8081
+            predicates:
+              - Path=/gestion-comercial/**
+
+          - id: ms-logistica
+            uri: http://ms-logistica:8082
+            predicates:
+              - Path=/gestion-logistica/**
+
+          
+          - id: geoapi
+            uri: http://geoapi:8084
+            predicates:
+               - Path=/geoapi/**

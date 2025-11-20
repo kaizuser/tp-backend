@@ -14,7 +14,7 @@ dividir que explica cada uno, la secuencia y documentación con Swagger / OpenAP
 La tiro para robar un poco de tiempo, si llegamos para agregarlo al rar mejor.
 
 
-
+* nose si tengo que levantar el geoapi con la dockerizacion
 
 Detalladamente el punto 2
 

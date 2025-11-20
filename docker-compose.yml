@@ -1,15 +1,72 @@
+version: "3.9"
+
 services:
   keycloak:
     image: quay.io/keycloak/keycloak:24.0
-    command: start-dev
+    command: ["start-dev", "--http-port=8180", "--hostname-strict=false"]
     environment:
       TZ: America/Argentina/Buenos_Aires
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin
+      # Idealmente:
+      # KC_HOSTNAME: keycloak
     ports:
-      - "8180:8080"
+      - "8180:8180"
     volumes:
       - keycloak_data:/opt/keycloak/data
+    networks:
+      - backend
+
+  ms-usuario:
+    build: ./ms-usuario
+    container_name: ms-usuario
+    ports:
+      - "8083:8083"
+    depends_on:
+      - keycloak
+    networks:
+      - backend
+
+  ms-comercial:
+    build: ./ms-comercial
+    container_name: ms-comercial
+    ports:
+      - "8081:8081"
+    depends_on:
+      - keycloak
+    networks:
+      - backend
+
+  ms-logistica:
+    build: ./ms-logistica
+    container_name: ms-logistica
+    ports:
+      - "8082:8082"
+    depends_on:
+      - keycloak
+    networks:
+      - backend
+
+
+
+  api-gateway:
+    build: ./api-gateway
+    container_name: api-gateway
+    ports:
+      - "8080:8080"
+    depends_on:
+      - ms-usuario
+      - ms-comercial
+      - ms-logistica
+      - keycloak
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    networks:
+      - backend
 
 volumes:
   keycloak_data:
+
+networks:
+  backend:
+    driver: bridge
