@@ -4,9 +4,7 @@ To do:
 
 2) API Client interno entre microservicios
 
-3) dockerización individual para cada ms 
-
-4) levantar todo y empezar a probar con postman
+3) levantar todo y empezar a probar con postman
 
 Extra: 
 Creo que no hace falta meterlo en el rar asique lo podemos hacer en el finde, el tema de la presentación:
