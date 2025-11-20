@@ -1,18 +1,14 @@
 To do:
 
-1) ms-comercial
+1) todos los requerimientos dentro de cada ms 
 
-2) todos los requerimientos dentro de cada ms 
+2) API Client interno entre microservicios
 
-3) probar la api de google maps
+3) verificar que cada requerimiento funcione con: @PreAuthorize("hasRole('rol')") (lo hago a la tarde antes de q entremos todos)
 
-4) API Client interno entre microservicios
+4) dockerización individual para cada ms 
 
-5) verificar que cada requerimiento funcione con: @PreAuthorize("hasRole('rol')")
-
-6) dockerización individual para cada ms 
-
-7) levantar todo y empezar a probar con postman
+5) levantar todo y empezar a probar con postman
 
 Extra: 
 Creo que no hace falta meterlo en el rar asique lo podemos hacer en el finde, el tema de la presentación:
@@ -22,96 +18,9 @@ La tiro para robar un poco de tiempo, si llegamos para agregarlo al rar mejor.
 
 
 
+Detalladamente el punto 2
 
-
-detalladamente: el punto 3 y 4:
-3) Probar la GOOGLE DISTANCE API (solo MS Logística)
-
-Esta parte ya la empezamos antes.
-Ahora te lo pongo en modo TPI oficial.
-
-📌 ¿Qué exige el enunciado?
-
-✔ Debe calcular:
-
-distancia origen → depósito
-
-depósito → depósito
-
-depósito → destino
-
-origen → destino
-
-✔ Debe usar Google Distance Matrix
-✔ Debe tener un servicio interno (GeoService)
-✔ Debe guardar:
-
-kilómetros
-
-tiempo estimado
-
-✔ Debe integrarse a tramos y rutas
-✔ Debe usarse para:
-
-costo estimado
-
-costo real
-
-tiempo estimado
-
-tiempo real
-
-📦 LO QUE YA TENÉS HECHO (bien)
-
-GeoService usando RestClient
-
-DTO DistanciaDTO
-
-Lectura de API key desde application.yml
-
-Controlador opcional de prueba
-
-⚠ LO QUE FALTA HACER (clave para aprobar)
-✔ Integrar esto dentro de TramoService
-
-Cuando un operador crea un tramo:
-
-POST /logistica/tramo
-
-
-Tu MS debe hacer:
-
-Armar string "lat,lng"
-
-Llamar a geoService.calcularDistancia(...)
-
-Setear:
-
-tramo.distanciaKm = dto.getKilometros()
-tramo.duracionEstimado = dto.getDuracionTexto()
-
-
-Guardar el tramo
-
-Usar esos valores para costos
-
-Ejemplo real dentro de TramoService
-public Tramo crearTramo(Tramo t) throws Exception {
-
-    String origen = t.getOrigenLat() + "," + t.getOrigenLng();
-    String destino = t.getDestinoLat() + "," + t.getDestinoLng();
-
-    DistanciaDTO d = geoService.calcularDistancia(origen, destino);
-
-    t.setDistanciaKm(d.getKilometros());
-    t.setDuracionEstimado(d.getDuracionTexto());
-
-    return tramoRepository.save(t);
-}
-
-
-
-4) API CLIENT INTERNO ENTRE MICROSERVICIOS (Apunte 18)
+2) API CLIENT INTERNO ENTRE MICROSERVICIOS (Apunte 18)
 
 En un sistema de microservicios, un MS debe pedir datos a otro MS.
 No se deben compartir DB.
