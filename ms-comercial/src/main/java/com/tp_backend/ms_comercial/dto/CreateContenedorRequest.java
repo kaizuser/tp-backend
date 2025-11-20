@@ -1,5 +1,9 @@
 package com.tp_backend.ms_comercial.dto;
 
-public class CreateContenedorRequest {
-    
-}
+public record CreateContenedorRequest (
+    Double capacidad_tn,
+    String estado,
+    Double volumen,
+    Long idDeposito
+    )
+{}
