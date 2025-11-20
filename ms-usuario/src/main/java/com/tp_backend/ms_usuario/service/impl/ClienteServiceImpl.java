@@ -1,5 +1,9 @@
 package com.tp_backend.ms_usuario.service.impl;
 
+
+import com.tp_backend.ms_usuario.dto.ClienteCreateRequestDTO;
+import com.tp_backend.ms_usuario.dto.ClienteDTO;
+import com.tp_backend.ms_usuario.mapper.ClienteMapper;
 import com.tp_backend.ms_usuario.model.Cliente;
 import com.tp_backend.ms_usuario.repository.ClienteRepository;
 import com.tp_backend.ms_usuario.service.ClienteService;
@@ -14,6 +18,7 @@ import java.util.List;
 public class ClienteServiceImpl implements ClienteService {
 
     private final ClienteRepository clienteRepository;
+    
 
     @Override
     public Cliente save(Cliente cliente) {
@@ -56,5 +61,7 @@ public class ClienteServiceImpl implements ClienteService {
     public List<Cliente> findAll() {
         return clienteRepository.findAll();
     }
+
+    
 }
 

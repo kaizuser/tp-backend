@@ -6,6 +6,9 @@ import com.tp_backend.ms_usuario.mapper.ClienteMapper;
 import com.tp_backend.ms_usuario.model.Cliente;
 import com.tp_backend.ms_usuario.service.ClienteService;
 
+
+
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -75,5 +78,8 @@ public class ClienteController {
             return ResponseEntity.badRequest().build();
         }
     }
+
+    
+
 }
 

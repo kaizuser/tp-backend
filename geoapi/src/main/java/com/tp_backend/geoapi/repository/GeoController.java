@@ -1,7 +1,8 @@
-package com.tp_backend.ms_logistica.controller;
+package com.tp_backend.geoapi.repository;
 
-import com.tp_backend.ms_logistica.dto.DistanciaDTO;
-import com.tp_backend.ms_logistica.service.GeoService;
+
+import com.tp_backend.geoapi.dto.DistanciaDTO;
+import com.tp_backend.geoapi.service.GeoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

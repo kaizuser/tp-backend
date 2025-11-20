@@ -1,11 +1,11 @@
-package com.tp_backend.ms_logistica.service;
+package com.tp_backend.geoapi.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
-import com.tp_backend.ms_logistica.dto.DistanciaDTO;
+import com.tp_backend.geoapi.dto.DistanciaDTO;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 

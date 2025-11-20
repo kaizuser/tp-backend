@@ -1,4 +1,4 @@
-package com.tp_backend.ms_logistica.dto;
+package com.tp_backend.geoapi.dto;
 
 import lombok.Data;
 

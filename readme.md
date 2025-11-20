@@ -268,3 +268,34 @@ Roles:
 admin admin
 cliente cliente
 empleado empleado
+
+
+
+
+
+
+
+COMO CREAR UN NUEVO USUARIO (Entrar en la carpeta cliente o empleado segun corresponda)
+Endpoint 1: solo se utiliza la primera vez: obtener el token de administrador: 
+Para poder crear usuarios y asignar roles en Keycloak necesitás un access token de un client con permisos de administration realm.
+
+
+Endpoint 2: crear el usuario nuevo, tenes que modificar los datos del body porque sino te va a decir que no podes crear un usuario que ya está creado
+
+Endpoint 3: buscar el usuario recien creado para obtener el id, tenes que modificar el get y poner el nuevo username  
+
+Endpoint 4: obtener el rol cliente, no hay que cambiar nada
+pero si obtener el roleid
+
+Endpoint 5: asignar ese rol al usuario: en el endpoint modificas el userid que obtuviste en el endpoint 3, y en el body pones el roleid
+
+(opcional)Endpoint 6: cambias el userid en el get para verificar que tenga ese rol
+
+forma de comprobarlo: 
+en el localhost:8180 entras con admin admin, tiras f5 en los users y ya aparece
+
+
+
+
+
+
