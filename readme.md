@@ -1,14 +1,12 @@
 To do:
 
-1) todos los requerimientos dentro de cada ms 
+1) todos los requerimientos dentro de cada ms con sus reglas 
 
 2) API Client interno entre microservicios
 
-3) verificar que cada requerimiento funcione con: @PreAuthorize("hasRole('rol')") (lo hago a la tarde antes de q entremos todos)
+3) dockerización individual para cada ms 
 
-4) dockerización individual para cada ms 
-
-5) levantar todo y empezar a probar con postman
+4) levantar todo y empezar a probar con postman
 
 Extra: 
 Creo que no hace falta meterlo en el rar asique lo podemos hacer en el finde, el tema de la presentación:
