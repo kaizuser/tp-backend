@@ -42,14 +42,13 @@ public class SecurityConfig {
 
                     // ← ACA PODEMOS DEJAR LIBRE EL TEST, OBLIGADO REQUIERE TOKEN
                     // .requestMatchers("/test/**").authenticated()
-
                     .anyRequest().authenticated()
-            )
-            .oauth2ResourceServer(oauth2 ->
-                oauth2.jwt(jwt ->
-                    jwt.jwtAuthenticationConverter(roleConverter)
-                )
             );
+//            .oauth2ResourceServer(oauth2 ->
+//                oauth2.jwt(jwt ->
+//                    jwt.jwtAuthenticationConverter(roleConverter)
+//                )
+//            );
 
         return http.build();
     }

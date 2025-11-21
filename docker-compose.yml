@@ -17,13 +17,37 @@ services:
     networks:
       - backend
 
+  postgres:
+    image: postgres:15
+    container_name: postgres
+    environment:
+      POSTGRES_USER: postgres       # Usar el usuario por defecto (Super-usuario)
+      POSTGRES_PASSWORD: rootpass   # Contraseña para ese Super-usuario
+      POSTGRES_DB: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./db/init:/docker-entrypoint-initdb.d
+    networks:
+      - backend
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+
   ms-usuario:
     build: ./ms-usuario
     container_name: ms-usuario
     ports:
       - "8083:8083"
     depends_on:
-      - keycloak
+      postgres:
+        condition: service_healthy
+      keycloak:
+        condition: service_started
     networks:
       - backend
 
@@ -33,9 +57,25 @@ services:
     ports:
       - "8081:8081"
     depends_on:
-      - keycloak
+      postgres:
+        condition: service_healthy
+      keycloak:
+        condition: service_started
     networks:
       - backend
+
+  test-runner-comercial:
+      image: maven:3.9-eclipse-temurin-21
+      container_name: test-runner-comercial
+      networks:
+        - backend
+      volumes:
+        - ./ms-comercial:/usr/src/ms-comercial 
+        - ~/.m2:/root/.m2 
+      working_dir: /usr/src/ms-comercial
+      depends_on:
+        postgres:
+          condition: service_healthy
 
   ms-logistica:
     build: ./ms-logistica
@@ -43,7 +83,10 @@ services:
     ports:
       - "8082:8082"
     depends_on:
-      - keycloak
+      postgres:
+        condition: service_healthy
+      keycloak:
+        condition: service_started
     networks:
       - backend
 
@@ -66,6 +109,7 @@ services:
 
 volumes:
   keycloak_data:
+  pgdata:
 
 networks:
   backend:

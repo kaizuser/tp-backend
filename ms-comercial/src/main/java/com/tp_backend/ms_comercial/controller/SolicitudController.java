@@ -27,6 +27,8 @@ public class SolicitudController {
             Solicitud saved = solicitudService.save(dto);
             return ResponseEntity.ok(solicitudMapper.toDTO(saved));
         } catch (Exception e) {
+	    e.printStackTrace(); // <---- ESTO
+
             return ResponseEntity.badRequest().build();
         }
     }
